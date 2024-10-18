@@ -8,7 +8,8 @@ CREATE TABLE Funcionario (
     CPF CHAR(14),
     Email VARCHAR(256),
     Senha VARCHAR(45),
-    Telefone VARCHAR(11),
+    Telefone VARCHAR(14),
+    Setor VARCHAR(45),
     fkAdministrador INT,
     CONSTRAINT fkFuncionario FOREIGN KEY (fkAdministrador) 
         REFERENCES Funcionario(idFuncionario)
@@ -17,19 +18,28 @@ CREATE TABLE Funcionario (
 CREATE TABLE Agencia (
     idAgencia INT PRIMARY KEY AUTO_INCREMENT,
     Nome VARCHAR(45),
-    CNPJ CHAR(18),
+    CNPJ CHAR(14), 
     Endereco VARCHAR(45),
-    CEP CHAR(10),
+    CEP VARCHAR(8), 
     fkAdministrador INT,
     CONSTRAINT fkAdministradorAgencia FOREIGN KEY (fkAdministrador) 
         REFERENCES Funcionario(idFuncionario)
 );
 
-CREATE TABLE Estado (
+CREATE TABLE Pais (
+    idPais INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(45),
+    Continente VARCHAR(45)
+);
+
+CREATE TABLE UF ( 
     idEstado INT PRIMARY KEY AUTO_INCREMENT,
     Nome VARCHAR(45),
     Regiao VARCHAR(45),
-    CodigoIBGE CHAR(2)
+    CodigoIBGE CHAR(2),
+    fkPais INT,
+    CONSTRAINT fkPaisEstado FOREIGN KEY (fkPais) 
+        REFERENCES Pais(idPais) 
 );
 
 CREATE TABLE Criminalidade (
@@ -39,7 +49,7 @@ CREATE TABLE Criminalidade (
     MunicipiosPerigosos VARCHAR(45),
     fkEstado INT,
     CONSTRAINT fkEstadoCriminalidade FOREIGN KEY (fkEstado) 
-        REFERENCES Estado(idEstado)
+        REFERENCES UF(idEstado) 
 );
 
 CREATE TABLE Eventos (
@@ -48,13 +58,13 @@ CREATE TABLE Eventos (
     Descricao VARCHAR(45)
 );
 
-CREATE TABLE EstadoHasEvento (
+CREATE TABLE EstadoHasEventos (
     idEventoEstado INT PRIMARY KEY AUTO_INCREMENT,
     dtEventoInicio DATE,
     dtEventoTermino DATE,
     fkEstado INT,
     CONSTRAINT fkEstadoEventos FOREIGN KEY (fkEstado) 
-        REFERENCES Estado(idEstado),
+        REFERENCES UF(idEstado),
     fkEventos INT,
     CONSTRAINT fkEventosEstado FOREIGN KEY (fkEventos) 
         REFERENCES Eventos(idEventos)
@@ -63,34 +73,25 @@ CREATE TABLE EstadoHasEvento (
 CREATE TABLE Aeroporto (
     idAeroporto INT PRIMARY KEY AUTO_INCREMENT,
     NomeAeroporto VARCHAR(75),
-    SiglaAeroporto VARCHAR(10),
-    Continente VARCHAR(45),
+    SiglaAeroporto VARCHAR(10), 
     fkEstado INT,
     CONSTRAINT fkEstadoAeroportos FOREIGN KEY (fkEstado) 
-        REFERENCES Estado(idEstado)
+        REFERENCES UF(idEstado)
 );
 
--- Tabela associativa entre Agência e Aeroporto
-CREATE TABLE AgenciaHasAeroporto (
-    fkAgencia INT,
-    fkAeroporto INT,
-    PRIMARY KEY (fkAgencia, fkAeroporto),
-    CONSTRAINT fkAgenciaAeroporto FOREIGN KEY (fkAgencia) 
-        REFERENCES Agencia(idAgencia),
-    CONSTRAINT fkAeroportoAgencia FOREIGN KEY (fkAeroporto) 
-        REFERENCES Aeroporto(idAeroporto)
-);
-
-CREATE TABLE Passagem (
+CREATE TABLE Viagem (
     idPassagem INT PRIMARY KEY AUTO_INCREMENT,
-    NomePassagem VARCHAR(75),
-    Natureza VARCHAR(10),
-    Origem VARCHAR(75),
-    Destino VARCHAR(75),
+    NomePassagem VARCHAR(45),
+    Natureza VARCHAR(45),
+    Origem VARCHAR(45),
+    Destino VARCHAR(45),
     dtViagem DATE,
-    fkAgencia INT,
-    CONSTRAINT fkAgenciaPassagem FOREIGN KEY (fkAgencia) 
-        REFERENCES Agencia(idAgencia)
+    fkAeroportoOrigem INT, 
+    fkAeroportoDestino INT, 
+    CONSTRAINT fkAeroportoOrigem FOREIGN KEY (fkAeroportoOrigem) 
+        REFERENCES Aeroporto(idAeroporto),
+    CONSTRAINT fkAeroportoDestino FOREIGN KEY (fkAeroportoDestino) 
+        REFERENCES Aeroporto(idAeroporto)
 );
 
 CREATE TABLE Passageiros (
@@ -100,5 +101,5 @@ CREATE TABLE Passageiros (
     DataHora DATETIME,
     fkPassagem INT,
     CONSTRAINT fkPassagemPassageiros FOREIGN KEY (fkPassagem) 
-        REFERENCES Passagem(idPassagem)
+        REFERENCES Viagem(idPassagem)
 );
