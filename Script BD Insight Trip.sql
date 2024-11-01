@@ -1,9 +1,6 @@
 CREATE DATABASE InsightTrip;
 USE InsightTrip;
 
-create user 'API'@'%' identified by 'webDataViz0API';
-grant insert, select, update on InsightTrip.* to 'API'@'localhost';
-
 CREATE TABLE Funcionario (
     idFuncionario INT PRIMARY KEY AUTO_INCREMENT,
     Nome VARCHAR(45),
