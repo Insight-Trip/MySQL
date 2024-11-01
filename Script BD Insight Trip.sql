@@ -1,6 +1,9 @@
 CREATE DATABASE InsightTrip;
-
 USE InsightTrip;
+
+create user 'API'@'localhost' identified by 'webDataViz0API';
+grant insert, select, update on InsightTrip.* to 'API'@'localhost';
+show grants for 'API'@'localhost';
 
 CREATE TABLE Funcionario (
     idFuncionario INT PRIMARY KEY AUTO_INCREMENT,
@@ -33,13 +36,9 @@ CREATE TABLE Pais (
 );
 
 CREATE TABLE UF ( 
-    idEstado INT PRIMARY KEY AUTO_INCREMENT,
+    CodigoIBGE INT PRIMARY KEY,
     Nome VARCHAR(45),
-    Regiao VARCHAR(45),
-    CodigoIBGE CHAR(2),
-    fkPais INT,
-    CONSTRAINT fkPaisEstado FOREIGN KEY (fkPais) 
-        REFERENCES Pais(idPais) 
+    Regiao VARCHAR(45)
 );
 
 CREATE TABLE Criminalidade (
@@ -49,7 +48,7 @@ CREATE TABLE Criminalidade (
     MunicipiosPerigosos VARCHAR(45),
     fkEstado INT,
     CONSTRAINT fkEstadoCriminalidade FOREIGN KEY (fkEstado) 
-        REFERENCES UF(idEstado) 
+        REFERENCES UF(CodigoIBGE) 
 );
 
 CREATE TABLE Eventos (
@@ -64,7 +63,7 @@ CREATE TABLE EstadoHasEventos (
     dtEventoTermino DATE,
     fkEstado INT,
     CONSTRAINT fkEstadoEventos FOREIGN KEY (fkEstado) 
-        REFERENCES UF(idEstado),
+        REFERENCES UF(CodigoIBGE),
     fkEventos INT,
     CONSTRAINT fkEventosEstado FOREIGN KEY (fkEventos) 
         REFERENCES Eventos(idEventos)
@@ -73,33 +72,49 @@ CREATE TABLE EstadoHasEventos (
 CREATE TABLE Aeroporto (
     idAeroporto INT PRIMARY KEY AUTO_INCREMENT,
     NomeAeroporto VARCHAR(75),
-    SiglaAeroporto VARCHAR(10), 
     fkEstado INT,
+    fkPais INT,
     CONSTRAINT fkEstadoAeroportos FOREIGN KEY (fkEstado) 
-        REFERENCES UF(idEstado)
+        REFERENCES UF(CodigoIBGE),
+	CONSTRAINT fkPaisAeroportos FOREIGN KEY (fkPais) 
+        REFERENCES Pais(idPais)
 );
 
 CREATE TABLE Viagem (
     idPassagem INT PRIMARY KEY AUTO_INCREMENT,
-    NomePassagem VARCHAR(45),
-    Natureza VARCHAR(45),
-    Origem VARCHAR(45),
-    Destino VARCHAR(45),
     dtViagem DATE,
     fkAeroportoOrigem INT, 
-    fkAeroportoDestino INT, 
+    fkAeroportoDestino INT,
+    QtdPassageirosPagos INT,
+    QtdPassageirosGratis INT,
     CONSTRAINT fkAeroportoOrigem FOREIGN KEY (fkAeroportoOrigem) 
         REFERENCES Aeroporto(idAeroporto),
     CONSTRAINT fkAeroportoDestino FOREIGN KEY (fkAeroportoDestino) 
         REFERENCES Aeroporto(idAeroporto)
 );
 
-CREATE TABLE Passageiros (
-    idPassageiros INT PRIMARY KEY AUTO_INCREMENT,
-    QtdPagos INT,
-    QtdGratis INT,
-    DataHora DATETIME,
-    fkPassagem INT,
-    CONSTRAINT fkPassagemPassageiros FOREIGN KEY (fkPassagem) 
-        REFERENCES Viagem(idPassagem)
-);
+select * from pais;
+select * from UF;
+select * from aeroporto;
+
+SELECT idAeroporto, nomeAeroporto, UF.Nome AS NomeUF, Pais.Nome AS NomePais
+FROM aeroporto
+JOIN Pais ON idPais = fkPais
+LEFT JOIN UF ON CodigoIBGE = fkEstado
+ORDER BY Pais.Nome;
+
+SELECT idPassagem, dtViagem AS 'Data', 
+AeroportoOrigem.NomeAeroporto AS 'Aeroporto Origem', PaisOrigem.Nome AS 'País Origem', UFOrigem.Nome AS 'Estado Origem', 
+AeroportoDestino.NomeAeroporto AS 'Aeroporto Destino', PaisDestino.Nome AS 'País Destino', UFDestino.Nome AS 'Estado Destino', 
+QtdPassageirosPagos AS 'Passageiros Pagos', QtdPassageirosGratis AS 'Passageiros Grátis' FROM Viagem
+JOIN Aeroporto AS AeroportoOrigem ON fkAeroportoOrigem = AeroportoOrigem.idAeroporto
+JOIN Aeroporto AS AeroportoDestino ON fkAeroportoDestino = AeroportoDestino.idAeroporto
+JOIN Pais AS PaisOrigem ON AeroportoOrigem.fkPais = PaisOrigem.IdPais
+JOIN Pais AS PaisDestino ON AeroportoDestino.fkPais = PaisDestino.IdPais
+LEFT JOIN UF AS UFOrigem ON AeroportoOrigem.fkEstado = UFOrigem.CodigoIBGE
+JOIN UF AS UFDestino ON AeroportoDestino.fkEstado = UFDestino.CodigoIBGE
+ORDER BY dtViagem LIMIT 100000;
+
+
+-- DROP USER 'API'@'localhost'; --
+-- DROP DATABASE InsightTrip--
