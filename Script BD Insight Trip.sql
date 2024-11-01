@@ -1,9 +1,8 @@
 CREATE DATABASE InsightTrip;
 USE InsightTrip;
 
-create user 'API'@'localhost' identified by 'webDataViz0API';
+create user 'API'@'%' identified by 'webDataViz0API';
 grant insert, select, update on InsightTrip.* to 'API'@'localhost';
-show grants for 'API'@'localhost';
 
 CREATE TABLE Funcionario (
     idFuncionario INT PRIMARY KEY AUTO_INCREMENT,
@@ -92,29 +91,3 @@ CREATE TABLE Viagem (
     CONSTRAINT fkAeroportoDestino FOREIGN KEY (fkAeroportoDestino) 
         REFERENCES Aeroporto(idAeroporto)
 );
-
-select * from pais;
-select * from UF;
-select * from aeroporto;
-
-SELECT idAeroporto, nomeAeroporto, UF.Nome AS NomeUF, Pais.Nome AS NomePais
-FROM aeroporto
-JOIN Pais ON idPais = fkPais
-LEFT JOIN UF ON CodigoIBGE = fkEstado
-ORDER BY Pais.Nome;
-
-SELECT idPassagem, dtViagem AS 'Data', 
-AeroportoOrigem.NomeAeroporto AS 'Aeroporto Origem', PaisOrigem.Nome AS 'País Origem', UFOrigem.Nome AS 'Estado Origem', 
-AeroportoDestino.NomeAeroporto AS 'Aeroporto Destino', PaisDestino.Nome AS 'País Destino', UFDestino.Nome AS 'Estado Destino', 
-QtdPassageirosPagos AS 'Passageiros Pagos', QtdPassageirosGratis AS 'Passageiros Grátis' FROM Viagem
-JOIN Aeroporto AS AeroportoOrigem ON fkAeroportoOrigem = AeroportoOrigem.idAeroporto
-JOIN Aeroporto AS AeroportoDestino ON fkAeroportoDestino = AeroportoDestino.idAeroporto
-JOIN Pais AS PaisOrigem ON AeroportoOrigem.fkPais = PaisOrigem.IdPais
-JOIN Pais AS PaisDestino ON AeroportoDestino.fkPais = PaisDestino.IdPais
-LEFT JOIN UF AS UFOrigem ON AeroportoOrigem.fkEstado = UFOrigem.CodigoIBGE
-JOIN UF AS UFDestino ON AeroportoDestino.fkEstado = UFDestino.CodigoIBGE
-ORDER BY dtViagem LIMIT 100000;
-
-
--- DROP USER 'API'@'localhost'; --
--- DROP DATABASE InsightTrip--
