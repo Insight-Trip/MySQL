@@ -39,9 +39,8 @@ CREATE TABLE UF (
 
 CREATE TABLE Criminalidade (
     idCriminalidade INT PRIMARY KEY AUTO_INCREMENT,
-    DataHora DATETIME,
-    QtdVitimas INT, 
-    MunicipiosPerigosos VARCHAR(45),
+    DtCrime DATE,
+    QtdVitimas INT,
     fkEstado INT,
     CONSTRAINT fkEstadoCriminalidade FOREIGN KEY (fkEstado) 
         REFERENCES UF(CodigoIBGE) 
@@ -88,3 +87,7 @@ CREATE TABLE Viagem (
     CONSTRAINT fkAeroportoDestino FOREIGN KEY (fkAeroportoDestino) 
         REFERENCES Aeroporto(idAeroporto)
 );
+
+INSERT INTO Funcionario VALUES
+(default, 'Admin', null, 'Admin', 'Admin', null, null, null),
+(default, 'Usuário Teste', '12345678910', 'teste@email.com', 'teste123', '11 912345678', 'Marketing', null);
