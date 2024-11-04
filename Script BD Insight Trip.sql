@@ -37,8 +37,16 @@ CREATE TABLE UF (
     Regiao VARCHAR(45)
 );
 
+CREATE TABLE Clima (
+	idClima INT PRIMARY KEY AUTO_INCREMENT,
+	EstacaoAno VARCHAR(45),
+    DtInicio DATE,
+    DtFim DATE
+);
+
 CREATE TABLE Criminalidade (
     idCriminalidade INT PRIMARY KEY AUTO_INCREMENT,
+    NomeCrime VARCHAR(45),
     DtCrime DATE,
     QtdVitimas INT,
     fkEstado INT,
