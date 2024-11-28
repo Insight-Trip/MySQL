@@ -37,11 +37,11 @@ CREATE TABLE UF (
     Regiao VARCHAR(45)
 );
 
-CREATE TABLE Criminalidade (
-    idCriminalidade INT PRIMARY KEY AUTO_INCREMENT,
-    DataHora DATETIME,
-    QtdVitimas INT, 
-    MunicipiosPerigosos VARCHAR(45),
+CREATE TABLE Crime (
+    idCrime INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(45),
+    qtdOcorrencia INT,
+    Data DATE,
     fkEstado INT,
     CONSTRAINT fkEstadoCriminalidade FOREIGN KEY (fkEstado) 
         REFERENCES UF(CodigoIBGE) 
