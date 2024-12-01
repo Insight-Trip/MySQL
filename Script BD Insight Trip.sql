@@ -90,4 +90,4 @@ CREATE TABLE Viagem (
 
 INSERT INTO Funcionario VALUES
 (default, 'Admin', null, 'Admin', md5('Admin'), null, null, null),
-(default, 'Usuário Teste', '12345678910', 'teste@email.com', md5('teste123'), '11 912345678', 'Marketing', null);
+(default, 'Usuário Teste', '12345678910', 'teste@email.com', md5('teste123'), '11 912345678', 'Marketing', 1);
